@@ -63,7 +63,7 @@ export default function (dragHandlerEl, opt = {}) {
     DragEventService.on(window, 'end', drop)
   }
   function drag(e) {
-    const {el, position} = resolveDragedElAndInitialPosition()
+    const {el, position} = resolveDragedElAndInitialPosition(e)
     store.el = el
     store.initialPosition = {...position}
     const r = opt.drag && opt.drag(e, opt, store)
@@ -157,7 +157,7 @@ export default function (dragHandlerEl, opt = {}) {
     }
     store = getPureStore()
   }
-  function resolveDragedElAndInitialPosition() {
+  function resolveDragedElAndInitialPosition(e) {
     const el0 = opt.getEl ? opt.getEl(dragHandlerEl, opt) : dragHandlerEl
     let el = el0
     if (opt.clone) {
@@ -165,10 +165,14 @@ export default function (dragHandlerEl, opt = {}) {
       el = el0.cloneNode(true)
       el0.parentElement.appendChild(el)
     }
+
+    let pos = offsetToPosition(el, getOffset(el0));
+    pos.y  = e.pageY;
+
     return {
-      position: offsetToPosition(el, getOffset(el0)),
-      el,
-    }
+      position: pos,
+      el: el
+    };
   }
   function getPureStore() {
     return {movedCount: 0}

@@ -618,7 +618,7 @@
     }
 
     function drag(e) {
-      var _resolveDragedElAndIn = resolveDragedElAndInitialPosition(),
+      var _resolveDragedElAndIn = resolveDragedElAndInitialPosition(e),
           el = _resolveDragedElAndIn.el,
           position = _resolveDragedElAndIn.position;
 
@@ -735,7 +735,7 @@
       store$$1 = getPureStore();
     }
 
-    function resolveDragedElAndInitialPosition() {
+    function resolveDragedElAndInitialPosition(e) {
       var el0 = opt.getEl ? opt.getEl(dragHandlerEl, opt) : dragHandlerEl;
       var el = el0;
 
@@ -745,8 +745,10 @@
         el0.parentElement.appendChild(el);
       }
 
+      var pos = offsetToPosition(el, getOffset(el0));
+      pos.y = e.pageY;
       return {
-        position: offsetToPosition(el, getOffset(el0)),
+        position: pos,
         el: el
       };
     }
