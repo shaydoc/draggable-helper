@@ -1,5 +1,5 @@
 /*!
- * draggable-helper v1.0.10
+ * draggable-helper v1.0.10.1
  * (c) 2018-present phphe <phphe@outlook.com> (https://github.com/phphe)
  * Released under the MIT License.
  */
@@ -83,7 +83,7 @@ function index (dragHandlerEl) {
   }
 
   function drag(e) {
-    var _resolveDragedElAndIn = resolveDragedElAndInitialPosition(),
+    var _resolveDragedElAndIn = resolveDragedElAndInitialPosition(e),
         el = _resolveDragedElAndIn.el,
         position = _resolveDragedElAndIn.position;
 
@@ -200,7 +200,7 @@ function index (dragHandlerEl) {
     store = getPureStore();
   }
 
-  function resolveDragedElAndInitialPosition() {
+  function resolveDragedElAndInitialPosition(e) {
     var el0 = opt.getEl ? opt.getEl(dragHandlerEl, opt) : dragHandlerEl;
     var el = el0;
 
@@ -210,8 +210,10 @@ function index (dragHandlerEl) {
       el0.parentElement.appendChild(el);
     }
 
+    var pos = helperJs.offsetToPosition(el, helperJs.getOffset(el0));
+    pos.y = e.pageY;
     return {
-      position: helperJs.offsetToPosition(el, helperJs.getOffset(el0)),
+      position: pos,
       el: el
     };
   }

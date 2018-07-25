@@ -60,14 +60,14 @@ export default function (dragHandlerEl, opt = {}) {
       x: e.pageX,
       y: e.pageY,
     }
-    store.initialMouse = {...store.mouse}
+    store.initialMouse = { ...store.mouse }
     onDOM(document, 'mousemove', moving)
     onDOM(window, 'mouseup', drop)
   }
   function drag(e) {
-    const {el, position} = resolveDragedElAndInitialPosition()
+    const { el, position } = resolveDragedElAndInitialPosition(e)
     store.el = el
-    store.initialPosition = {...position}
+    store.initialPosition = { ...position }
     const r = opt.drag && opt.drag(e, opt, store)
     if (r === false) {
       offDOM(document.body, 'selectstart', preventSelect)
@@ -93,7 +93,7 @@ export default function (dragHandlerEl, opt = {}) {
     backupAttr(el, 'class')
     addClass(el, opt.draggingClass)
     //
-    const {body} = document
+    const { body } = document
     let bodyOldStyle = (body.getAttribute('style') || '').trim()
     if (bodyOldStyle.length && !bodyOldStyle.endsWith(';')) {
       bodyOldStyle += ';'
@@ -135,7 +135,7 @@ export default function (dragHandlerEl, opt = {}) {
       }
       Object.assign(store.el.style, {
         left: store.initialPosition.x + move.x + 'px',
-        top:  store.initialPosition.y + move.y + 'px',
+        top: store.initialPosition.y + move.y + 'px',
       })
       store.movedCount++
     }
@@ -146,7 +146,7 @@ export default function (dragHandlerEl, opt = {}) {
     // drag executed if movedCount > 0
     if (store.movedCount > 0) {
       store.movedCount = 0
-      const {el} = store
+      const { el } = store
       if (opt.clone) {
         el.parentElement.removeChild(el)
       } else {
@@ -159,7 +159,7 @@ export default function (dragHandlerEl, opt = {}) {
     }
     store = getPureStore()
   }
-  function resolveDragedElAndInitialPosition() {
+  function resolveDragedElAndInitialPosition(e) {
     const el0 = opt.getEl ? opt.getEl(dragHandlerEl, opt) : dragHandlerEl
     let el = el0
     if (opt.clone) {
@@ -167,13 +167,18 @@ export default function (dragHandlerEl, opt = {}) {
       el = el0.cloneNode(true)
       el0.parentElement.appendChild(el)
     }
+
+    var pos = offsetToPosition(el, getOffset(el0));
+    pos.y = e.pageY;
+
     return {
-      position: offsetToPosition(el, getOffset(el0)),
-      el,
-    }
+      position: pos,
+      el: el
+    };
   }
+
   function getPureStore() {
-    return {movedCount: 0}
+    return { movedCount: 0 }
   }
   function preventSelect(e) {
     e.preventDefault()
